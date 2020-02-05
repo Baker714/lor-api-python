@@ -1,24 +1,7 @@
 import requests
 from tkinter import *
 
-top = Tk()
-top.geometry('300x300')
-gameID = -1
-winCount = 0
-lossCount = 0
-winPercent = 0
-textDisplay = Text(top)
-winPercentCalc = Button(top, text="Calculate Win Rate")
-title = "Legends of Runeterra Win/Loss Tracker"
-titleDisplay = Label(top, text=title)
-top.title(title)
-
-def main():
-    global gameID
-    global winCount
-    global lossCount
-    global winPercent
-
+def calcAndDisplayWinLoss(gameID, winCount, lossCount, winPercent, textDisplay):
     #try:
     response = requests.get("http://localhost:21337/game-result")
 
@@ -32,25 +15,38 @@ def main():
         else:
             lossCount = lossCount + 1
 
-        textDisplay.insert(INSERT, str(winCount))
-        textDisplay.insert(INSERT, '\n' + str(lossCount))
-
+        textDisplay.insert(INSERT, "Wins: " + str(winCount))
+        textDisplay.insert(INSERT, '\n' + "Losses: " + str(lossCount))
+        textDisplay.insert(INSERT, '\n' + "Win Percentage: ")
         if lossCount != 0:
-            textDisplay.insert(INSERT, '\n' +  str(winCount/lossCount))
+            textDisplay.insert(INSERT, str((winCount/lossCount)*100))
         else:
-            textDisplay.insert(INSERT, '\n' +  str(winCount))
+            textDisplay.insert(INSERT, str(winCount))
+        textDisplay.insert(INSERT, "%")
     #else:
     #    raise Exception()
     #except:
     #    textDisplay.insert(END, "Sorry, something went wrong with fetching Data")
 
 
-winPercentCalc.pack()
-textDisplay.pack()
-titleDisplay.pack()
+#winPercentCalc.pack()
 
-while True:
-    top.update_idletasks()
-    top.update()
-    main()
-top.mainloop()
+if __name__ == "__main__":
+    top = Tk()
+    top.geometry('300x300')
+    gameID = -1
+    winCount = 0
+    lossCount = 0
+    winPercent = 0
+    textDisplay = Text(top)
+    #winPercentCalc = Button(top, text="Calculate Win Rate")
+    title = "Legends of Runeterra Win/Loss Tracker"
+    titleDisplay = Label(top, text=title)
+    top.title(title)
+
+    textDisplay.pack()
+    titleDisplay.pack()
+    while True:
+        top.update()
+        calcAndDisplayWinLoss(gameID, winCount, lossCount, winPercent, textDisplay)
+    top.mainloop()
